@@ -23,8 +23,10 @@ class Sphere(Object):
 def normalize(vector):
     return vector / np.linalg.norm(vector)
 
+
 def reflected(vector, axis):
     return vector - 2 * np.dot(vector, axis) * axis
+
 
 def sphere_intersect(center, radius, ray_origin, ray_direction):
     b = 2 * np.dot(ray_direction, ray_origin - center)
@@ -36,6 +38,7 @@ def sphere_intersect(center, radius, ray_origin, ray_direction):
         if t1 > 0 and t2 > 0:
             return min(t1, t2)
     return None
+
 
 def nearest_intersected_object(objects, ray_origin, ray_direction):
     distances = [sphere_intersect(obj.center, obj.radius, ray_origin, ray_direction) for obj in objects]
@@ -51,7 +54,7 @@ def nearest_intersected_object(objects, ray_origin, ray_direction):
 width = 300
 height = 200
 
-max_depth = 3
+max_depth = 5
 
 camera = np.array([0, 0, 1])
 ratio = float(width) / height
@@ -60,12 +63,12 @@ screen = (-1, 1 / ratio, 1, -1 / ratio) # left, top, right, bottom
 
 
 objects = [
-    Sphere([-.2, 0, -1], 0.7, [0, 0, 0.1], [0, 0, 0.7], [1, 1, 1], 100, 0.5),
-    Sphere([0.1, -0.3, 0],  0.1, [0, 0.1, 0], [0, 0.7, 0], [1, 1, 1], 100, 0.5),
-    Sphere([-0.3, 0, 0], 0.15, [0.1, 0, 0.1], [0.7, 0, 0.7], [1, 1, 1], 100, 0.5),
-    Sphere([-.5, -.5, -.5], 0.15, [0.1, 0, 0], [0.7, 0, 0], [1, 1, 1], 100, 0.5),
-    Sphere([-.2, 0.5, -0.2], 0.2, [.1, .1, 0], [.7, .7, 0], [1, 1, 1], 100, 0.5),
-    Sphere([0, -9000, 0], 9000-0.7, [0.1, 0.1, 0.1], [0.6, 0.6, 0.6], [1, 1, 1], 100, 0.5) # Large Screen
+    Sphere([-.2, 0, -1], 0.7, [0.1, 0.1, 0.1], [0.7, 0.7, 0.7], [1, 1, 1], 100, 0.5), # Silver
+    Sphere([0.1, -0.3, 0],  0.1, [0, 0.1, 0], [0, 0.7, 0], [1, 1, 1], 100, 0.5), # Green
+    Sphere([-0.3, 0, 0], 0.15, [0., 0, 0.1], [0., 0, 0.7], [1, 1, 1], 100, 0.5), # Blue
+    Sphere([-.5, -.5, -.5], 0.15, [0.1, 0, 0], [0.7, 0, 0], [1, 1, 1], 100, 0.5), # Red
+    Sphere([-.2, 0.5, -0.2], 0.2, [.1, .1, 0], [.7, .7, 0], [1, 1, 1], 100, 0.5), # Yellow
+    Sphere([0, -9000, 0], 9000-0.7, [0.1, 0.1, 0.1], [0.6, 0.6, 0.6], [1, 1, 1], 100, 0.5) # Large Screen at bottom
 ]
 
 light = Object([5, 5, 5], [1, 1, 1], [1, 1, 1], [1, 1, 1])
@@ -82,7 +85,7 @@ for i, y in enumerate(np.linspace(screen[1], screen[3], height)):
         color = np.zeros((3))
         reflection = 1
 
-        for k in range(max_depth):
+        for k in range(max_depth): # tracing reflections up to max_depth times
             # check for intersections
             nearest_object, min_distance = nearest_intersected_object(objects, origin, direction)
             if nearest_object is None:
